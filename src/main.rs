@@ -1,7 +1,6 @@
-use std::io::{self, Write, Read};
+use std::io::{self, Write};
 use terminal_chat::{connect, listen, read_stream_print, IpAddress};
 use std::thread;
-use std::sync::{Arc, Mutex};
 
 
 fn main() {
@@ -16,7 +15,7 @@ fn main() {
 Version 0.1");
 
     println!("Do you want to listen(l) or connect(c) to a listener?");
-    let mut did_listen;
+    let did_listen;
     let stream =
         if input().contains("l") {
             did_listen = true;

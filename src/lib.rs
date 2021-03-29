@@ -1,6 +1,5 @@
-use std::net::{TcpStream, TcpListener, IpAddr, Ipv4Addr};
+use std::net::{TcpStream, TcpListener};
 use std::io::{self, Read};
-use std::sync::{Mutex, Arc};
 use crate::IpAddress::{Normal, WithPort};
 
 pub enum IpAddress {
