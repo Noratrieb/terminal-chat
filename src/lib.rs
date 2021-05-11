@@ -11,7 +11,7 @@ pub fn listen() -> StreamResult {
     println!("Listening on {}:8080", local_ipaddress::get().unwrap());
     let listener = TcpListener::bind(("127.0.0.1", 8080))?;
     let stream = listener.incoming().next().unwrap()?;
-    println!("Connected. Waiting for response stream...");
+    println!("Connected.");
     println!("other adress: {}", stream.peer_addr()?.ip());
 
     Ok(stream)
@@ -24,6 +24,7 @@ pub fn connect(address: String, port: String) -> StreamResult {
     let stream = TcpStream::connect((&*address, port))?;
 
     println!("Connected.");
+    println!("other adress: {}", stream.peer_addr()?.ip());
 
     Ok(stream)
 }
@@ -44,6 +45,7 @@ pub fn network_thread(mut stream: TcpStream, rx: Receiver<String>) {
 }
 
 pub fn ui_thread(sx: Sender<String>) {
+    println!("You can now write messages to your peer!");
     loop {
         let input = input();
         sx.send(input).expect("could not send value");

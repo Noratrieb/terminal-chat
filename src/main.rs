@@ -16,9 +16,9 @@ fn main() {
 Version 0.1"
     );
 
-    println!("Do you want to listen(l) or connect(c) to a listener?");
+    println!("Do you want to (l)isten or (c)onnect to a listener?");
 
-    let result = if input().contains("l") {
+    let result = if input() == "l" {
         listen()
     } else {
         println!("Address: (empty for default)");
@@ -36,8 +36,6 @@ Version 0.1"
 
     match result {
         Ok(s) => {
-            println!("Successful connection established.");
-
             let (sx, rx): (Sender<String>, Receiver<String>) = mpsc::channel();
 
             let net = thread::spawn(move || {
