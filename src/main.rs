@@ -1,8 +1,7 @@
-use std::io::{self, Write};
 use std::thread;
-use terminal_chat::{
-    connect, listen, listen_on_port, read_stream_print,
-};
+use terminal_chat::{connect, listen, network_thread, input, ui_thread};
+use std::sync::{mpsc};
+use std::sync::mpsc::{Sender, Receiver};
 
 fn main() {
     println!(
@@ -29,51 +28,28 @@ Version 0.1"
         };
         println!("Port: (empty for default)");
         let port = match &*input() {
-            "" => String::from("7979"),
+            "" => String::from("8080"),
             s => String::from(s)
         };
         connect(address, port)
     };
 
     match result {
-        Ok(_) => println!("Exited TerminalChat sucessfully."),
+        Ok(s) => {
+            println!("Successful connection established.");
+
+            let (sx, rx): (Sender<String>, Receiver<String>) = mpsc::channel();
+
+            let net = thread::spawn(move || {
+                network_thread(s, rx);
+            });
+            let ui = thread::spawn(move ||{
+                ui_thread(sx)
+            });
+
+            net.join().unwrap();
+            ui.join().unwrap();
+        }
         Err(e) => println!("An error occurred! Error message: '{}'", e)
     }
-
-    // old
-    /*
-
-        let stream = match stream {
-            Ok(x) => x,
-            Err(_) => {
-                println!("Error opening stream");
-                return;
-            }
-        };
-
-        let mut stream2 = match did_listen {
-            true => connect_to_addr(IpAddress::WithPort(String::from("127.0.0.1"), 7980)).unwrap(),
-            false => listen_on_port(7989).unwrap(),
-        };
-
-        thread::spawn(move || {
-            read_stream_print(stream);
-        });
-
-        println!("Connected.");
-
-        let connect_msg = "Hello World!";
-        stream2.write(connect_msg.as_bytes()).unwrap();
-
-        loop {
-            let input = input();
-            stream2.write(input.clone().as_bytes());
-            println!("-- Trying to send {}", input);
-        }*/
-}
-
-fn input() -> String {
-    let mut buffer = String::new();
-    let _ = io::stdin().read_line(&mut buffer);
-    buffer
 }
