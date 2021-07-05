@@ -9,7 +9,7 @@ type StreamResult = Result<TcpStream, Box<dyn Error>>;
 
 pub fn listen() -> StreamResult {
     println!("Listening on {}:8080", local_ipaddress::get().unwrap());
-    let listener = TcpListener::bind(("127.0.0.1", 80))?;
+    let listener = TcpListener::bind(("127.0.0.1", 8080))?;
     let stream = listener.incoming().next().unwrap()?;
     println!("Connected.");
     println!("other adress: {}", stream.peer_addr()?.ip());
